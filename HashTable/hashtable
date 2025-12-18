@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#define MAX_BUCKET 10
+
+
+typedef struct People {
+    const char* name;
+    int age;
+    struct People* next;
+}People;
+
+People* Harshtable[MAX_BUCKET];
+
+void nullHarsh (){
+    for (int i = 0; i < MAX_BUCKET; i++){
+        Harshtable[i] = NULL;
+    }
+}
+
+int Harshing (const char *name) {
+    int z = 0;
+    int len = strlen(name);
+    for (int i = 0; i < len; i++){
+        z = z*31 + (unsigned char)name[i];
+
+    }
+    return z % MAX_BUCKET;
+}
+
+void HarshInsert (int Harshvalue, People* name){
+    if (Harshtable[Harshvalue] != NULL){
+        People* cur = Harshtable[Harshvalue];
+        while (cur->next != NULL){
+            cur = cur-> next;
+        }
+        cur -> next = name;
+    }
+    else Harshtable[Harshvalue] = name;
+}
+
+People* CreatePeople(int age, const char* name){
+    People* people = malloc(sizeof(People));
+    *people = (People){
+        .age = age,
+        .name = name,
+        .next = NULL
+    };
+    return people;
+
+}
+
+bool HarshFind(const char* name){
+    int Harshvalue = Harshing(name);
+
+    People* cur = Harshtable[Harshvalue];
+    while (cur != NULL){
+        if (strcmp(cur->name,name) == 0){
+        return true;
+        }
+        cur = cur->next;
+    }
+    return false;
+}
+
+bool HarshDelete (const char* name){
+    int Harshvalue = Harshing(name);
+
+    People* prev = NULL;
+    People* cur = Harshtable[Harshvalue];
+    while (cur != NULL){
+        if (strcmp(cur->name,name) == 0){
+            if(prev == NULL){
+                Harshtable[Harshvalue] = cur->next;
+                free(cur);
+                return true;
+            }
+            else{
+                prev->next = cur -> next;
+                free(cur);
+                return true;
+            }
+        }
+        prev = cur;
+        cur = cur->next;
+    }
+    return false;
+}
+
+int main()
+{
+    nullHarsh();
+
+    People* Doku = CreatePeople(22, "Doku");
+    People* Foden = CreatePeople(18, "Foden");
+    People* Bruno = CreatePeople(32, "Bruno");
+    People* Frimpong = CreatePeople(23, "Frimpong");
+    People* Zirkzee = CreatePeople(29, "Zirkzee");
+    People* Eze = CreatePeople(26, "Eze");
+
+    HarshInsert (Harshing(Doku->name), Doku);
+    HarshInsert (Harshing(Foden->name), Foden);
+    HarshInsert (Harshing(Bruno->name), Bruno);
+    HarshInsert (Harshing(Frimpong->name), Frimpong);
+    HarshInsert (Harshing(Zirkzee->name), Zirkzee);
+    HarshInsert (Harshing(Eze->name), Eze);
+
+    for (int i = 0; i < MAX_BUCKET; i++){
+        if (Harshtable[i] != NULL){
+            People* cur = Harshtable[i];
+            printf("%d. ", i);
+            while (cur != NULL){
+                printf ("name:%s age:%d -> ", cur->name, cur->age);
+                cur = cur -> next;            }
+            printf("\n");
+        }
+        else printf ("%d. 0\n", i);
+    }
+
+    HarshFind("Bruno") ? printf("Found Bruno\n") : printf("Not found Bruno\n");;
+    HarshFind("Mbappe") ? printf("Found Mbappe\n") : printf("Not found Mbappe\n");;
+    HarshFind("Doku") ? printf("Found Doku\n") : printf("Not found Doku\n");;
+    HarshFind("Messi") ? printf("Found Messi\n") : printf("Not found Messi\n");;
+    HarshDelete("Bruno") ? printf("Delete Bruno\n") : printf("Not delete Bruno\n");;
+    HarshFind("Bruno") ? printf("Found Bruno\n") : printf("Not found Bruno\n");;
+}
