@@ -1,0 +1,26 @@
+bool isAnagram(char* s, char* t) {
+    int counts[26] = {0};
+    int countt[26] = {0};
+    
+    int slen =strlen(s);
+    int tlen = strlen(t);
+
+    if (slen != tlen){
+        return false;
+    }
+
+    int i;
+
+    for (i = 0; i < slen; i++){
+        counts[-(97-s[i])] +=1;
+        countt[-(97-t[i])] +=1;
+    }
+
+    for (i = 0; i < 26; i++){
+        if (counts[i] != countt[i]){
+            return false;
+        }
+    }
+
+    return true;
+}
