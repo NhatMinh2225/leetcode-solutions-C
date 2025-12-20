@@ -1,0 +1,82 @@
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int cmpChar(const void* a, const void* b) {
+    return (*(char*)a - *(char*)b);
+}
+
+char*** groupAnagrams(char** strs, int strsSize, int* returnSize, int** returnColumnSizes) {
+    char** newStrs = malloc(strsSize * sizeof(char*));
+
+    for (int i = 0; i < strsSize; i++){
+        newStrs[i] = malloc (strlen(strs[i])+1);
+        strcpy(newStrs[i], strs[i]);
+        qsort(newStrs[i], strlen(newStrs[i]), sizeof(char), cmpChar);
+    }
+ 
+    char*** groupgroupAnagrams = malloc (sizeof(char**)*strsSize);
+    char*** SgroupgroupAnagrams = malloc (sizeof(char**)*strsSize);
+
+    for (int i = 0; i < strsSize; i++){
+        groupgroupAnagrams[i] = NULL;
+    }
+
+    int count[strsSize];
+    for (int i = 0; i < strsSize; i++){
+        count[i] = 0;
+    }
+
+    int groupCount = 0;
+
+    for (int i = 0; i < strsSize; i++){
+        
+
+        if (groupgroupAnagrams[0] == NULL){
+            char** groupAnagrams = malloc (sizeof(char*)*strsSize);
+            char** SgroupAnagrams = malloc (sizeof(char*)*strsSize);
+            groupCount++;
+            count[0]++;
+            groupgroupAnagrams[0] = groupAnagrams;
+            SgroupgroupAnagrams[0] = SgroupAnagrams;
+            groupgroupAnagrams[0][0] =  strs[i];
+            SgroupgroupAnagrams[0][0] = newStrs[i];
+        }
+        else{
+            int z = 0;
+            bool skip = false;
+            while(groupgroupAnagrams[z] != NULL ){
+                if (strcmp(SgroupgroupAnagrams[z][0],newStrs[i]) == 0){
+                    groupgroupAnagrams[z][count[z]]=strs[i];
+                    count[z]++;
+                    skip = true;
+                }
+                z++;
+            }
+            if (!skip){
+                char** groupAnagrams = malloc (sizeof(char*)*strsSize);
+                char** SgroupAnagrams = malloc (sizeof(char*)*strsSize);
+                count[z]++;
+                groupCount++;
+                groupgroupAnagrams[z] = groupAnagrams;
+                groupgroupAnagrams[z][0] =  strs[i];
+                SgroupgroupAnagrams[z] = SgroupAnagrams;
+                SgroupgroupAnagrams[z][0] = newStrs[i];
+
+            }
+        }
+    }
+
+    *(returnSize) = groupCount;
+    *returnColumnSizes = malloc (groupCount * sizeof(int));
+    for (int i = 0; i < groupCount; i++){
+        (*returnColumnSizes)[i] = count[i];
+    }
+    return groupgroupAnagrams;
+}
+
